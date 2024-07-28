@@ -13,6 +13,7 @@
 extension ReferenceType_tests {
     
     ///
+    @MainActor
     func test_objectID() throws {
         
         /// Since `ReferenceType.objectID` is an action with side-effects we test all permutations of assertions about the two object IDs

@@ -9,9 +9,8 @@
 public protocol ReferenceType: AnyObject { }
 
 ///
-private let accessQueue = DispatchQueue(label: "objectIDAccessQueue")
-private var nextObjectID = ObjectID(number: 0)
-private var claimedObjectIDs: [ObjectIdentifier: ObjectID] = [:]
+@MainActor private var nextObjectID = ObjectID(number: 0)
+@MainActor private var claimedObjectIDs: [ObjectIdentifier: ObjectID] = [:]
 
 ///
 extension ReferenceType {
@@ -22,34 +21,31 @@ extension ReferenceType {
     }
     
     ///
+    @MainActor
     public var objectID: ObjectID {
         
         ///
         let systemIdentifier = self.systemObjectIdentifier
             
         ///
-        return accessQueue.sync {
+        if let objectID = claimedObjectIDs[systemIdentifier] {
             
             ///
-            if let objectID = claimedObjectIDs[systemIdentifier] {
-                
-                ///
-                return objectID
-                
-            } else {
-                
-                ///
-                let nextID = nextObjectID
-                
-                ///
-                claimedObjectIDs[systemIdentifier] = nextID
-                
-                ///
-                nextObjectID.increment()
-                
-                ///
-                return nextID
-            }
+            return objectID
+            
+        } else {
+            
+            ///
+            let nextID = nextObjectID
+            
+            ///
+            claimedObjectIDs[systemIdentifier] = nextID
+            
+            ///
+            nextObjectID.increment()
+            
+            ///
+            return nextID
         }
     }
 }
