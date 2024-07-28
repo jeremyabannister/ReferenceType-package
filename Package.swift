@@ -1,23 +1,83 @@
 // swift-tools-version: 5.10
-// The swift-tools-version declares the minimum version of Swift required to build this package.
 
+///
 import PackageDescription
 
+
+///
 let package = Package(
     name: "ReferenceType-package",
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
+        
+        ///
         .library(
-            name: "ReferenceType-package",
-            targets: ["ReferenceType-package"]),
+            name: "ReferenceType-module",
+            targets: [
+                "ReferenceType-module",
+            ]
+        ),
+        
+        ///
+        .library(
+            name: "ReferenceTypeTestToolkit",
+            targets: [
+                "ReferenceTypeTestToolkit",
+            ]
+        ),
+    ],
+    dependencies: [
+        
+        ///
+        .package(
+            url: "https://github.com/jeremyabannister/ValueType-package",
+            "0.1.0" ..< "0.2.0"
+        ),
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
+        
+        ///
         .target(
-            name: "ReferenceType-package"),
+            name: "ReferenceType-module",
+            dependencies: [
+                
+                ///
+                .product(
+                    name: "ValueType-module",
+                    package: "ValueType-package"
+                ),
+            ]
+        ),
+        
+        ///
+        .target(
+            name: "ReferenceTypeTestToolkit",
+            dependencies: [
+                
+                ///
+                "ReferenceType-module",
+                
+                ///
+                .product(
+                    name: "ValueTypeTestToolkit",
+                    package: "ValueType-package"
+                ),
+            ]
+        ),
+        
+        ///
         .testTarget(
-            name: "ReferenceType-packageTests",
-            dependencies: ["ReferenceType-package"]),
+            name: "ReferenceType-tests",
+            dependencies: [
+                "ReferenceTypeTestToolkit",
+            ]
+        ),
+        
+        ///
+        .testTarget(
+            name: "ReferenceTypeTestToolkit-tests",
+            dependencies: [
+                "ReferenceTypeTestToolkit",
+            ]
+        ),
     ]
 )
